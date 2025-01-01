@@ -3,7 +3,7 @@ use std::fs;
 use itertools::Itertools;
 
 fn main() {
-    let input_file ="inputs/day02.txt";
+    let input_file = "inputs/day02.txt";
 
     let contents = fs::read_to_string(input_file).unwrap();
 
@@ -38,9 +38,7 @@ fn is_naive_safe(levels: &[i32]) -> bool {
         .map(|(a, b)| a - b)
         .collect::<Vec<_>>();
     let incdec = diffs[0] > 0;
-    let diff_checker = move |d: i32| {
-        d != 0 && (d > 0) == incdec && d.abs() <= 3
-    };
+    let diff_checker = move |d: i32| d != 0 && (d > 0) == incdec && d.abs() <= 3;
     for diff in diffs {
         if !diff_checker(diff) {
             return false;

@@ -23,9 +23,11 @@ fn main() {
     let mut right_index = 0;
     let mut similarity_score = 0;
     for left_num in &left_list {
-        while right_index < n_lines && *left_num > right_list[right_index] { right_index +=1 }
+        while right_index < n_lines && *left_num > right_list[right_index] {
+            right_index += 1
+        }
         let mut count = 0;
-        while right_index < n_lines && *left_num == right_list[right_index] { 
+        while right_index < n_lines && *left_num == right_list[right_index] {
             count += 1;
             right_index += 1;
         }

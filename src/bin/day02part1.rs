@@ -3,7 +3,7 @@ use std::fs;
 use itertools::Itertools;
 
 fn main() {
-    let input_file ="inputs/day02.txt";
+    let input_file = "inputs/day02.txt";
 
     let contents = fs::read_to_string(input_file).unwrap();
 
@@ -14,14 +14,12 @@ fn main() {
             .split_whitespace()
             .map(|s| s.parse::<i32>().unwrap())
             .tuple_windows()
-            .map(|(a,b)| a - b)
+            .map(|(a, b)| a - b)
             .peekable();
 
         let incdec = *diffs.peek().unwrap() > 0; //true implies strictly decreasing, false implies (not strictly) increasing
-        
-        let diff_checker = move |d: i32| {
-            d != 0 && (d > 0) == incdec && d.abs() <= 3
-        };
+
+        let diff_checker = move |d: i32| d != 0 && (d > 0) == incdec && d.abs() <= 3;
 
         let mut safe = true;
         for diff in diffs {
@@ -29,7 +27,7 @@ fn main() {
                 safe = false;
                 break;
             }
-        } 
+        }
         if safe {
             n_safe_reports += 1;
         }

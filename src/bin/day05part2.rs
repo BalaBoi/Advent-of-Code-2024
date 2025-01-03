@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::{cmp::Ordering, collections::{HashMap, HashSet}};
 
 fn main() {
     let input_file = "inputs/day05.txt";
@@ -48,26 +48,31 @@ fn main() {
 
         if !already_correctly_ordered {
             let mut ordered = nums.clone();
-            dbg!(&ordered);
-            let mut i = 1;
-            while i < ordered.len() {
-                let mut j = 0;
-                while j < i { 
-                    if rules.get(&ordered[i]).unwrap_or(&HashSet::default()).contains(&ordered[j]) {
-                        ordered.insert(i + 1, ordered[j]);
-                        ordered.remove(j);
-                        i -= 1;
-                    } else {
-                        j += 1;
-                    }
+            ordered.sort_by(|a, b| {
+                if rules.get(a).unwrap_or(&HashSet::default()).contains(b) {
+                    Ordering::Less
+                } else if rules.get(b).unwrap_or(&HashSet::default()).contains(a) {
+                    Ordering::Greater
+                } else {
+                    Ordering::Equal
                 }
-                i += 1;
-            }
-            dbg!(&ordered);
+            });
+            // let mut i = 1;
+            // while i < ordered.len() {
+            //     let mut j = 0;
+            //     while j < i { 
+            //         if rules.get(&ordered[i]).unwrap_or(&HashSet::default()).contains(&ordered[j]) {
+            //             ordered.insert(i + 1, ordered[j]);
+            //             ordered.remove(j);
+            //             i -= 1;
+            //         } else {
+            //             j += 1;
+            //         }
+            //     }
+            //     i += 1;
+            // }
             result += ordered[ordered.len()/2];
         }
-
-
     }
 
     println!("The result is {}", result);

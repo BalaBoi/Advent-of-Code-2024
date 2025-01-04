@@ -9,7 +9,7 @@ fn main() {
     let mul_rgx = Regex::new(r"mul\((\d{1,3}),(\d{1,3})\)").unwrap();
     let do_rgx = Regex::new(r"do\(\)").unwrap();
     let dont_rgx = Regex::new(r"don't\(\)").unwrap();
-    
+
     let mut mul_iter = indices_iter(&mul_rgx, &contents).peekable();
     let mut do_iter = indices_iter(&do_rgx, &contents).peekable();
     let mut dont_iter = indices_iter(&dont_rgx, &contents).peekable();
@@ -47,13 +47,13 @@ fn main() {
                 if mul_allowed {
                     result += mul(index, &contents);
                 }
-            },
+            }
             OpType::Dont => {
                 mul_allowed = false;
-            },
+            }
             OpType::Do => {
                 mul_allowed = true;
-            },
+            }
         }
     }
 

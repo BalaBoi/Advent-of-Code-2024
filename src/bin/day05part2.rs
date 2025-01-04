@@ -1,14 +1,17 @@
-use std::{cmp::Ordering, collections::{HashMap, HashSet}};
+use std::{
+    cmp::Ordering,
+    collections::{HashMap, HashSet},
+};
 
 fn main() {
     let input_file = "inputs/day05.txt";
     let contents = std::fs::read_to_string(input_file).unwrap();
     let mut sections = contents.split("\n\n");
-    
+
     let rules_str = sections.next().unwrap();
-    
+
     let mut rules: HashMap<usize, HashSet<usize>> = HashMap::new();
-    
+
     for rule_str in rules_str.lines() {
         let mut nums = rule_str.split('|');
         let num1 = nums.next().unwrap().parse::<usize>().unwrap();
@@ -24,21 +27,20 @@ fn main() {
     let updates_str = sections.next().unwrap();
 
     let mut result = 0;
-    
+
     for update_str in updates_str.lines() {
         let nums = update_str
             .split(',')
             .map(|n| n.parse::<usize>().unwrap())
             .collect::<Vec<_>>();
-        
+
         let mut already_correctly_ordered = true;
 
         for i in 1..nums.len() {
             for prev in 0..i {
                 if rules
                     .get(&nums[i])
-                    .unwrap_or(&HashSet::default())
-                    .contains(&nums[prev])
+                    .map_or(false, |set| set.contains(&nums[prev]))
                 {
                     already_correctly_ordered = false;
                     break;
@@ -49,9 +51,9 @@ fn main() {
         if !already_correctly_ordered {
             let mut ordered = nums.clone();
             ordered.sort_by(|a, b| {
-                if rules.get(a).unwrap_or(&HashSet::default()).contains(b) {
+                if rules.get(a).map_or(false, |set| set.contains(b)) {
                     Ordering::Less
-                } else if rules.get(b).unwrap_or(&HashSet::default()).contains(a) {
+                } else if rules.get(b).map_or(false, |set| set.contains(a)) {
                     Ordering::Greater
                 } else {
                     Ordering::Equal
@@ -60,7 +62,7 @@ fn main() {
             // let mut i = 1;
             // while i < ordered.len() {
             //     let mut j = 0;
-            //     while j < i { 
+            //     while j < i {
             //         if rules.get(&ordered[i]).unwrap_or(&HashSet::default()).contains(&ordered[j]) {
             //             ordered.insert(i + 1, ordered[j]);
             //             ordered.remove(j);
@@ -71,7 +73,7 @@ fn main() {
             //     }
             //     i += 1;
             // }
-            result += ordered[ordered.len()/2];
+            result += ordered[ordered.len() / 2];
         }
     }
 

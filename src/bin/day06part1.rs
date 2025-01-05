@@ -1,16 +1,16 @@
 fn main() {
     let input_file = "inputs/day06.txt";
     let contents = std::fs::read_to_string(input_file).unwrap();
-//     let contents = r##"....#.....
-// .........#
-// ..........
-// ..#.......
-// .......#..
-// ..........
-// .#..^.....
-// ........#.
-// #.........
-// ......#..."##;
+    //     let contents = r##"....#.....
+    // .........#
+    // ..........
+    // ..#.......
+    // .......#..
+    // ..........
+    // .#..^.....
+    // ........#.
+    // #.........
+    // ......#..."##;
     let mut map = Map {
         grid: Vec::new(),
         n_rows: 0,
@@ -18,25 +18,20 @@ fn main() {
     };
     let mut guard_pos = None;
     for (row, line) in contents.lines().enumerate() {
-        map
-            .grid
-            .push(
-                line
-                    .chars()
-                    .enumerate()
-                    .map(|(column, c) | {
-                        match c {
-                            '.' => Square::Empty { visited: false },
-                            '#' => Square::Obstacle,
-                            '^' => {
-                                guard_pos = Some(Pos(row as i32, column as i32));
-                                Square::Empty { visited: true }
-                            },
-                            _ => unreachable!()
-                        }
-                    })
-                    .collect::<Vec<_>>()
-            );
+        map.grid.push(
+            line.chars()
+                .enumerate()
+                .map(|(column, c)| match c {
+                    '.' => Square::Empty { visited: false },
+                    '#' => Square::Obstacle,
+                    '^' => {
+                        guard_pos = Some(Pos(row as i32, column as i32));
+                        Square::Empty { visited: true }
+                    }
+                    _ => unreachable!(),
+                })
+                .collect::<Vec<_>>(),
+        );
     }
 
     map.n_rows = map.grid.len();
@@ -44,17 +39,14 @@ fn main() {
 
     let mut n_visited = 1;
 
-    move_guard(guard_pos.unwrap(), Direction::Up, &mut map, &mut n_visited);
+    move_guard(guard_pos.unwrap(), &mut map, &mut n_visited);
 
     println!("Number of visited positions are {}", n_visited);
-
 }
 
 enum Square {
     Obstacle,
-    Empty {
-        visited: bool,
-    },
+    Empty { visited: bool },
 }
 
 #[derive(Clone, Copy, Debug)]
@@ -87,7 +79,10 @@ struct Map {
 
 impl Map {
     fn is_within_map(&self, pos: Pos) -> bool {
-        0 <= pos.0 && pos.0 < self.n_rows.try_into().unwrap() && 0 <= pos.1 && pos.1 < self.n_columns.try_into().unwrap()
+        0 <= pos.0
+            && pos.0 < self.n_rows.try_into().unwrap()
+            && 0 <= pos.1
+            && pos.1 < self.n_columns.try_into().unwrap()
     }
 
     fn visit(&mut self, pos: Pos, n_visited: &mut usize) {
@@ -121,20 +116,15 @@ impl Direction {
     }
 }
 
-fn move_guard(
-    guard_pos: Pos,
-    direction: Direction,
-    map: &mut Map,
-    n_visited: &mut usize,
-) {
-    let mut pos_opt = Some((guard_pos, direction));
+fn move_guard(guard_pos: Pos, map: &mut Map, n_visited: &mut usize) {
+    let mut pos_opt = Some((guard_pos, Direction::Up));
     while let Some((pos, dir)) = pos_opt {
         // dbg!(&pos_opt);
         let new_pos = pos.next(dir);
         if map.is_within_map(new_pos) {
             if map.is_obstacle(new_pos) {
                 pos_opt = Some((pos, dir.turn_right()));
-            } else  {
+            } else {
                 map.visit(new_pos, n_visited);
                 pos_opt = Some((new_pos, dir));
             }

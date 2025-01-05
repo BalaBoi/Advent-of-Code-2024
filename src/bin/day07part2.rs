@@ -24,13 +24,12 @@ fn main() {
 }
 
 fn valid_equation(test_num: usize, nums: &Vec<usize>) -> bool {
-    use Ops::*;
-    valid_eq_recursive(test_num, nums, &[Mul]) || valid_eq_recursive(test_num, nums, &[Add])
+    valid_eq_recursive(test_num, nums, &[])
 }
 
 fn valid_eq_recursive(test_num: usize, nums: &Vec<usize>, ops: &[Ops]) -> bool {
     use Ops::*;
-    if nums.len() == ops.len() {
+    if nums.len() - 1 == ops.len() {
         if calc(nums, ops) == test_num {
             return true;
         } else {
@@ -55,12 +54,16 @@ fn valid_eq_recursive(test_num: usize, nums: &Vec<usize>, ops: &[Ops]) -> bool {
 
 fn calc(nums: &Vec<usize>, ops: &[Ops]) -> usize {
     use Ops::*;
+    let mut nums_iter = nums.iter();
+    let init = nums_iter.next().unwrap();
     ops.iter()
-        .zip(nums.iter())
-        .fold(0, |acc, (op, num)| match op {
-            Mul => acc * num,
-            Add => acc + num,
-            Conc => conc(acc, *num),
+        .zip(nums_iter)
+        .fold(*init, |acc, (op, num)| {
+            match op {
+                Mul => acc * num,
+                Add => acc + num,
+                Conc => conc(acc, *num),
+            }
         })
 }
 
@@ -69,7 +72,7 @@ fn conc(a: usize, b: usize) -> usize {
     s.parse().unwrap()
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 enum Ops {
     Mul,
     Add,

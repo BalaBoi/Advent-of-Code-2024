@@ -23,9 +23,10 @@ fn main() {
 
     let mut unique_locations = HashSet::new();
     for locs in tower_locations.values() {
-        for antinode in combinations_of_2_pos(&locs).flat_map(|(pos1, pos2)| antinodes(pos1, pos2))
+        for antinode in combinations_of_2_pos(&locs)
+            .flat_map(|(pos1, pos2)| antinodes(pos1, pos2, n_rows, n_columns))
         {
-            if antinode.within_grid(n_rows, n_columns) && !unique_locations.contains(&antinode) {
+            if !unique_locations.contains(&antinode) {
                 unique_locations.insert(antinode);
             }
         }
@@ -39,6 +40,22 @@ fn main() {
 
 #[derive(Clone, Copy, Hash, PartialEq, Eq, Debug)]
 struct Pos(i32, i32);
+
+impl std::ops::Add for Pos {
+    type Output = Self;
+
+    fn add(self, rhs: Self) -> Self::Output {
+        Self(self.0 + rhs.0, self.1 + rhs.1)
+    }
+}
+
+impl std::ops::Sub for Pos {
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Self(self.0 - rhs.0, self.1 - rhs.1)
+    }
+}
 
 impl Pos {
     fn within_grid(&self, n_rows: usize, n_columns: usize) -> bool {
@@ -57,8 +74,11 @@ fn combinations_of_2_pos(positions: &Vec<Pos>) -> impl Iterator<Item = (Pos, Pos
         .flat_map(|(i, pos1)| std::iter::repeat(pos1).zip(positions.iter().skip(i + 1).copied()))
 }
 
-fn antinodes(pos1: Pos, pos2: Pos) -> [Pos; 2] {
-    let Pos(a1, b1) = pos1;
-    let Pos(a2, b2) = pos2;
-    [Pos(2 * a1 - a2, 2 * b1 - b2), Pos(2 * a2 - a1, 2 * b2 - b1)]
+fn antinodes(pos1: Pos, pos2: Pos, n_rows: usize, n_columns: usize) -> impl Iterator<Item = Pos> {
+    let delta = pos1 - pos2;
+    let iter1 = std::iter::successors(Some(pos1), move |&p| Some(p + delta))
+        .take_while(move |p| p.within_grid(n_rows, n_columns));
+    let iter2 = std::iter::successors(Some(pos2), move |&p| Some(p - delta))
+        .take_while(move |p| p.within_grid(n_rows, n_columns));
+    iter1.chain(iter2)
 }

@@ -24,7 +24,7 @@ fn main() {
 }
 
 fn valid_equation(test_num: usize, nums: &Vec<usize>) -> bool {
-    valid_eq_recursive(test_num, nums, &[]) 
+    valid_eq_recursive(test_num, nums, &[])
 }
 
 fn valid_eq_recursive(test_num: usize, nums: &Vec<usize>, ops: &[Ops]) -> bool {

@@ -58,12 +58,10 @@ fn calc(nums: &Vec<usize>, ops: &[Ops]) -> usize {
     let init = nums_iter.next().unwrap();
     ops.iter()
         .zip(nums_iter)
-        .fold(*init, |acc, (op, num)| {
-            match op {
-                Mul => acc * num,
-                Add => acc + num,
-                Conc => conc(acc, *num),
-            }
+        .fold(*init, |acc, (op, num)| match op {
+            Mul => acc * num,
+            Add => acc + num,
+            Conc => conc(acc, *num),
         })
 }
 
